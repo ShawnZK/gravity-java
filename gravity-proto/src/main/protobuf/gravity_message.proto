@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package protobuf;
+
+option java_package = "com.sigmoid.gravity.proto";
+option java_outer_classname = "GravityMessageProto";
+//option java_multiple_files = true;
+
+message Heartbeat {
+    enum Role {
+        Empty = 0;
+        Tracer_Master = 1;
+        Tracer_Slave = 2;
+        Storage_Master = 3;
+        Storage_Slave = 4;
+    }
+    Role role = 1;
+}
+
+message Push {
+    string file_id = 1;
+    int32 size = 2;
+    bytes data = 3;
+    bytes check_sum = 4;
+}
+
+message PushAck {
+    bool success = 1;
+}
+
+message Read {
+    string namespace = 1;
+    string file_id = 2;
+}
+
+message ReadAck {
+    int32 size = 1;
+    bytes data = 2;
+    bytes check_sum = 3;
+}
+
+message ReadPrepare {
+    string namespace = 1;
+    string file_id = 2;
+}
+
+message ReadPrepareAck {
+    string host = 1;
+}
+
+message StatusSync {
+    string node_id = 1;
+    string group_id = 2;
+    string host = 3;
+    repeated string namespaces = 4;
+    int32 used_kb = 5;
+    int32 free_kb = 6;
+    int32 total_kb = 7;
+    int32 available_file = 8;
+    int32 total_file = 9;
+}
+
+message Write {
+    string namespace = 1;
+    string file_id = 2;
+    int32 size = 3;
+    bytes data = 4;
+    bytes check_sum = 5;
+}
+
+message WriteAck {
+    bool success = 1;
+}
+
+message WritePrepare {
+    string namespace = 1;
+    int32 size = 2;
+}
+
+message WritePrepareAck {
+    string host = 1;
+    string file_id = 2;
+}
+
+message GravityMessage {
+    int32 type = 1;
+    oneof body_oneof {
+        Heartbeat heartbeat = 2;
+        Push push = 3;
+        PushAck push_ack = 4;
+        Read read = 5;
+        ReadAck read_ack = 6;
+        ReadPrepare read_prepare = 7;
+        ReadPrepareAck read_prepare_ack = 8;
+        StatusSync status_sync = 9;
+        Write write = 10;
+        WriteAck write_ack = 11;
+        WritePrepare write_prepare = 12;
+        WritePrepareAck write_prepare_ack = 13;
+    }
+}
